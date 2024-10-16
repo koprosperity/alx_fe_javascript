@@ -43,6 +43,35 @@ function loadLastViewedQuote() {
     }
 }
 
+// Function to create the form for adding new quotes dynamically
+function createAddQuoteForm() {
+    const formContainer = document.createElement('div');
+
+    // Create input fields for new quote text and category
+    const quoteTextInput = document.createElement('input');
+    quoteTextInput.setAttribute('id', 'newQuoteText');
+    quoteTextInput.setAttribute('type', 'text');
+    quoteTextInput.setAttribute('placeholder', 'Enter a new quote');
+    
+    const quoteCategoryInput = document.createElement('input');
+    quoteCategoryInput.setAttribute('id', 'newQuoteCategory');
+    quoteCategoryInput.setAttribute('type', 'text');
+    quoteCategoryInput.setAttribute('placeholder', 'Enter quote category');
+
+    // Create the "Add Quote" button
+    const addButton = document.createElement('button');
+    addButton.textContent = 'Add Quote';
+    addButton.addEventListener('click', addQuote);
+
+    // Append the inputs and button to the form container
+    formContainer.appendChild(quoteTextInput);
+    formContainer.appendChild(quoteCategoryInput);
+    formContainer.appendChild(addButton);
+
+    // Append the form container to the body (or a specific section)
+    document.body.appendChild(formContainer);
+}
+
 // Function to add a new quote
 function addQuote() {
     const quoteText = document.getElementById('newQuoteText').value.trim();
@@ -84,7 +113,7 @@ function exportQuotesToJson() {
 function importFromJsonFile(event) {
     const fileReader = new FileReader();
 
-    fileReader.onload = function (event) {
+    fileReader.onload = function(event) {
         try {
             const importedQuotes = JSON.parse(event.target.result);
             if (Array.isArray(importedQuotes)) {
@@ -106,6 +135,7 @@ function importFromJsonFile(event) {
 document.addEventListener('DOMContentLoaded', () => {
     loadQuotes();
     loadLastViewedQuote();
+    createAddQuoteForm(); // Call the function to create the form dynamically
 });
 
 // Add event listener for "Show New Quote" button
