@@ -5,17 +5,17 @@ const quotes = [
     { text: "Life is what happens when you're busy making other plans.", category: "Life" }
 ];
 
-// Function to display a random quote
+// Function to display a random quote using innerHTML
 function showRandomQuote() {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const quote = quotes[randomIndex];
-    document.getElementById('quoteDisplay').innerText = `"${quote.text}" - ${quote.category}`;
+    document.getElementById('quoteDisplay').innerHTML = `"${quote.text}" - <em>${quote.category}</em>`;
 }
 
 // Attach event listener to the "Show New Quote" button
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
-// Function to add a new quote
+// Function to add a new quote using innerHTML
 function addQuote() {
     const quoteText = document.getElementById('newQuoteText').value.trim();
     const quoteCategory = document.getElementById('newQuoteCategory').value.trim();
