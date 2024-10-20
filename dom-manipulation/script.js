@@ -299,7 +299,7 @@ async function fetchQuotesFromServer() {
         console.error('Error fetching quotes from server:', error);
         return [];
     }
-} 
+}
 // Array to store the quotes with text and category
 let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     { text: "The journey of a thousand miles begins with one step.", category: "Inspiration" },
@@ -319,7 +319,7 @@ function populateCategories() {
     const categoryFilter = document.getElementById('categoryFilter');
     categoryFilter.innerHTML = `<option value="all">All Categories</option>`;
     const uniqueCategories = [...new Set(quotes.map(quote => quote.category))];
-    
+
     uniqueCategories.forEach(category => {
         const option = document.createElement('option');
         option.value = category;
@@ -339,6 +339,7 @@ function addQuote() {
         localStorage.setItem('quotes', JSON.stringify(quotes));
         populateCategories();  // Update categories
         alert('New quote added successfully!');
+        syncNewQuoteToServer(newQuote); // Sync new quote with the server
     } else {
         alert('Please enter both a quote and a category.');
     }
@@ -366,7 +367,7 @@ function saveQuotes() {
 // Function to import quotes from a JSON file
 function importFromJsonFile(event) {
     const fileReader = new FileReader();
-    fileReader.onload = function(event) {
+    fileReader.onload = function (event) {
         const importedQuotes = JSON.parse(event.target.result);
         quotes.push(...importedQuotes);
         saveQuotes();
@@ -393,17 +394,38 @@ function syncWithServer() {
     fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'GET'
     })
-    .then(response => response.json())
-    .then(data => {
-        // Simulate conflict resolution: server data takes precedence
-        if (data && data.length > 0) {
-            quotes.push(...data.map(post => ({ text: post.title, category: 'Imported' })));
-            saveQuotes();
-            alert('Quotes synced with server!');
-            populateCategories();  // Update categories after syncing
-        }
+        .then(response => response.json())
+        .then(data => {
+            // Simulate conflict resolution: server data takes precedence
+            if (data && data.length > 0) {
+                quotes.push(...data.map(post => ({ text: post.title, category: 'Imported' })));
+                saveQuotes();
+                alert('Quotes synced with server!');
+                populateCategories();  // Update categories after syncing
+            }
+        })
+        .catch(error => console.error('Error syncing with server:', error));
+}
+
+// Function to sync new quote to the server
+function syncNewQuoteToServer(newQuote) {
+    fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            title: newQuote.text,
+            body: newQuote.category,
+            userId: 1
+        })
     })
-    .catch(error => console.error('Error syncing with server:', error));
+        .then(response => response.json())
+        .then(data => {
+            console.log('Quote synced with server!', data);
+            alert('New quote synced with server!');
+        })
+        .catch(error => console.error('Error syncing new quote with server:', error));
 }
 
 // Event listeners
